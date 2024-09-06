@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Calendar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e0f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .calendar {
+            width: 400px; /* Increased width for a broader view */
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 500px; /* Set a fixed height for the entire calendar */
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #00796b;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            overflow-x: auto; /* Allow scrolling if content overflows */
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+
+        .calendar-header button {
+            background: #ffffff;
+            color: #00796b;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 8px 12px;
+            font-size: 16px;
+        }
+
+        .calendar-header button:hover {
+            background: #e0f2f1;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: #b2dfdb;
+            color: #004d40;
+            font-weight: bold;
+            border-top: 2px solid #00796b;
+            border-bottom: 2px solid #00796b; /* Add bottom border */
+            grid-auto-rows: 60px; /* Ensure consistent row height */
+        }
+
+        .calendar-days div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid #004d40;
+            border-right: 1px solid #004d40;
+            box-sizing: border-box; /* Ensure padding and borders are included in element width */
+        }
+
+        .calendar-days div:nth-child(7n) {
+            border-right: none; /* Remove border for the last column */
+        }
+
+        .calendar-days div:nth-last-child(-n+7) {
+            border-bottom: none; /* Remove border for the last row */
+        }
+
+        .calendar-days .day {
+            background: #ffffff;
+        }
+
+        .calendar-days .day:hover {
+            background: #004d40;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .prev-month, .next-month {
+            color: #9e9e9e;
+        }
+    </style>
+</head>
+<body>
+    <div class="calendar">
+        <div class="calendar-header">
+            <button id="prev-month">&lt;</button>
+            <span id="month-year"></span>
+            <button id="next-month">&gt;</button>
+        </div>
+        <div class="calendar-days">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+        </div>
+        <div id="days" class="calendar-days"></div>
+    </div>
+
+    <script>
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        let currentDate = new Date();
+
+        function renderCalendar() {
+            const monthYear = document.getElementById('month-year');
+            const daysContainer = document.getElementById('days');
+            const month = currentDate.getMonth();
+            const year = currentDate.getFullYear();
+            
+            monthYear.textContent = `${monthNames[month]} ${year}`;
+            daysContainer.innerHTML = '';
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const lastDate = new Date(year, month + 1, 0).getDate();
+            const prevLastDate = new Date(year, month, 0).getDate();
+
+            // Add days from the previous month
+            for (let i = firstDay; i > 0; i--) {
+                daysContainer.innerHTML += `<div class="day prev-month">${prevLastDate - i + 1}</div>`;
+            }
+
+            // Add days of the current month
+            for (let i = 1; i <= lastDate; i++) {
+                daysContainer.innerHTML += `<div class="day">${i}</div>`;
+            }
+
+            // Add days for the next month
+            const totalDays = firstDay + lastDate;
+            const nextDays = 42 - totalDays;
+            for (let i = 1; i <= nextDays; i++) {
+                daysContainer.innerHTML += `<div class="day next-month">${i}</div>`;
+            }
+        }
+
+        function changeMonth(offset) {
+            currentDate.setMonth(currentDate.getMonth() + offset);
+            renderCalendar();
+        }
+
+        document.getElementById('prev-month').addEventListener('click', () => changeMonth(-1));
+        document.getElementById('next-month').addEventListener('click', () => changeMonth(1));
+
+        renderCalendar();
+    </script>
+</body>
+</html>
